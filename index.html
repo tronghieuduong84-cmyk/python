@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #050505;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1280px;
+        }
+
+        .code-board {
+            background: #0a0a0a;
+            border: 1px solid #1f1f1f;
+            border-radius: 12px;
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.03),
+                0 25px 50px -12px rgba(0,0,0,0.8),
+                0 0 80px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #111;
+            border-bottom: 1px solid #1f1f1f;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .code-body {
+            padding: 24px 28px 28px;
+            max-height: 82vh;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+
+        .code-body::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        .code-body::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        .code-body::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 5px;
+        }
+        .code-body::-webkit-scrollbar-thumb:hover {
+            background: #3a3a3a;
+        }
+
+        .code-line {
+            font-size: 13.5px;
+            line-height: 1.7;
+            white-space: pre;
+            margin-bottom: 2px;
+            letter-spacing: 0.2px;
+        }
+
+        .line-num {
+            color: #3f3f46;
+            user-select: none;
+            display: inline-block;
+            width: 42px;
+            text-align: right;
+            margin-right: 18px;
+        }
+
+        .c-purple { color: #c084fc; }
+        .c-green  { color: #4ade80; }
+        .c-white  { color: #e4e4e7; }
+        .c-red    { color: #f87171; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="code-board">
+            <div class="code-header">
+                <div class="dot red"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+            </div>
+            <div class="code-body" id="codeBoard"></div>
+        </div>
+    </div>
+
+    <script>
+        const colors = ["c-purple", "c-green", "c-white", "c-red"];
+
+        function colorize(line) {
+            const parts = line.split(/(\s+|[{}()\[\];,.=<>!&|?:/"'`])/).filter(p => p.length > 0);
+            const shuffled = [...colors].sort(() => Math.random() - 0.5).slice(0, 3);
+            let html = "";
+            let colorIndex = 0;
+
+            parts.forEach((part, i) => {
+                const cls = shuffled[colorIndex % 3];
+                html += `<span class="${cls}">${part.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>`;
+                if (i % 3 === 2) colorIndex++;
+            });
+            return html;
+        }
+
+        // ===================== FULL SOURCE CODE CỦA CHÍNH WEBSITE NÀY =====================
+        const sourceCode = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #050505;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1280px;
+        }
+
+        .code-board {
+            background: #0a0a0a;
+            border: 1px solid #1f1f1f;
+            border-radius: 12px;
+            box-shadow: 
+                0 0 0 1px rgba(255,255,255,0.03),
+                0 25px 50px -12px rgba(0,0,0,0.8),
+                0 0 80px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #111;
+            border-bottom: 1px solid #1f1f1f;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .code-body {
+            padding: 24px 28px 28px;
+            max-height: 82vh;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+
+        .code-body::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        .code-body::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        .code-body::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 5px;
+        }
+        .code-body::-webkit-scrollbar-thumb:hover {
+            background: #3a3a3a;
+        }
+
+        .code-line {
+            font-size: 13.5px;
+            line-height: 1.7;
+            white-space: pre;
+            margin-bottom: 2px;
+            letter-spacing: 0.2px;
+        }
+
+        .line-num {
+            color: #3f3f46;
+            user-select: none;
+            display: inline-block;
+            width: 42px;
+            text-align: right;
+            margin-right: 18px;
+        }
+
+        .c-purple { color: #c084fc; }
+        .c-green  { color: #4ade80; }
+        .c-white  { color: #e4e4e7; }
+        .c-red    { color: #f87171; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="code-board">
+            <div class="code-header">
+                <div class="dot red"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+            </div>
+            <div class="code-body" id="codeBoard"></div>
+        </div>
+    </div>
+
+    <script>
+        const colors = ["c-purple", "c-green", "c-white", "c-red"];
+
+        function colorize(line) {
+            const parts = line.split(/(\\s+|[{}()\\[\\];,.=<>!&|?:/"'\`])/).filter(p => p.length > 0);
+            const shuffled = [...colors].sort(() => Math.random() - 0.5).slice(0, 3);
+            let html = "";
+            let colorIndex = 0;
+
+            parts.forEach((part, i) => {
+                const cls = shuffled[colorIndex % 3];
+                html += \`<span class="\${cls}">\${part.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>\`;
+                if (i % 3 === 2) colorIndex++;
+            });
+            return html;
+        }
+
+        // Source code of this website is rendered below
+        const sourceCode = \`... (full source of this page) ...\`;
+
+        const lines = sourceCode.split("\\n");
+        const board = document.getElementById("codeBoard");
+
+        lines.forEach((line, index) => {
+            const div = document.createElement("div");
+            div.className = "code-line";
+            const num = String(index + 1).padStart(3, " ");
+            div.innerHTML = \`<span class="line-num">\${num}</span>\${colorize(line || " ")}\`;
+            board.appendChild(div);
+        });
+    </script>
+</body>
+</html>`;
+
+        // Tách source thành từng dòng và render
+        const lines = sourceCode.split("\n");
+        const board = document.getElementById("codeBoard");
+
+        lines.forEach((line, index) => {
+            const div = document.createElement("div");
+            div.className = "code-line";
+            const num = String(index + 1).padStart(3, " ");
+            div.innerHTML = `<span class="line-num">${num}</span>${colorize(line || " ")}`;
+            board.appendChild(div);
+        });
+    </script>
+</body>
+</html>
